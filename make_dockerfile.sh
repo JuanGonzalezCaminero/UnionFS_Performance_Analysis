@@ -16,8 +16,8 @@ done
 i=$(expr $i + 1)
 echo "ADD unionfs_test_files /unionfs_benchmark/layer_$i" >> Dockerfile
 
-echo "#Copy benchmarking scripts" >> Dockerfile
-echo "COPY benchmark.sh /unionfs_benchmark/benchmark.sh" >> Dockerfile
+#echo "#Copy benchmarking scripts" >> Dockerfile
+#echo "COPY benchmark.sh /unionfs_benchmark/benchmark.sh" >> Dockerfile
 
 echo "# Run the benchmark" >> Dockerfile
-echo "CMD [\"/unionfs_benchmark/benchmark.sh\"]" >> Dockerfile
+echo "CMD [\"/unionfs_benchmark/data/benchmark.sh\", \"$(expr $layers - 1)\"]" >> Dockerfile

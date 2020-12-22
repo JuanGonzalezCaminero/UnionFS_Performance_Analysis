@@ -8,23 +8,28 @@ def rw_single(input_path, output_path, results_file):
 	#READ
 	start=time.clock_gettime(time.CLOCK_REALTIME)
 	data=input_file.read()
+	os.fsync(input_file)
 	input_file.close()
 	end=time.clock_gettime(time.CLOCK_REALTIME)
 	results_file.write(str(end-start)+",")
 
+
+	new_data=os.urandom(len(data))
 	#WRITE TO NEW FILE
 	start=time.clock_gettime(time.CLOCK_REALTIME)
-	output_file.write(data)
+	output_file.write(new_data)
+	os.fsync(output_file)
 	output_file.close()
 	end=time.clock_gettime(time.CLOCK_REALTIME)
 	results_file.write(str(end-start)+",")
 
 	#WRITE TO EXISTING FILE
 	output_file=open(input_path, 'wb')
-	modified_data=os.urandom(len(data))
 
+	new_data=os.urandom(len(data))
 	start=time.clock_gettime(time.CLOCK_REALTIME)
-	output_file.write(modified_data)
+	output_file.write(new_data)
+	os.fsync(output_file)
 	output_file.close()
 	end=time.clock_gettime(time.CLOCK_REALTIME)
 	results_file.write(str(end-start)+",")
@@ -37,6 +42,7 @@ def rw_multi(input_path, output_path, results_file, num_files):
 	for i in range(num_files):
 		input_file=open(input_path+"_"+str(i), 'rb')
 		data.append(input_file.read())
+		os.fsync(input_file)
 		input_file.close()
 	end=time.clock_gettime(time.CLOCK_REALTIME)
 	results_file.write(str(end-start)+",")
@@ -46,17 +52,19 @@ def rw_multi(input_path, output_path, results_file, num_files):
 	for i in range(num_files):
 		output_file=open(output_path+"_"+str(i), 'wb')
 		output_file.write(data[i])
+		os.fsync(output_file)
 		output_file.close()
 	end=time.clock_gettime(time.CLOCK_REALTIME)
 	results_file.write(str(end-start)+",")
 
 	#WRITE TO EXISTING FILE
-	modified_data=os.urandom(len(data[0]))
+	#modified_data=os.urandom(len(data[0]))
 
 	start=time.clock_gettime(time.CLOCK_REALTIME)
 	for i in range(num_files):
 		output_file=open(input_path+"_"+str(i), 'wb')
-		output_file.write(modified_data)
+		output_file.write(data[i])
+		os.fsync(output_file)
 		output_file.close()
 	end=time.clock_gettime(time.CLOCK_REALTIME)
 	results_file.write(str(end-start)+",")
